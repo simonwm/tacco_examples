@@ -1,0 +1,87 @@
+include: "code.snk"
+
+rule smob_run_notebook:
+    input:
+        *slideseq_mouse_olfactory_bulb_targets()
+    output:
+        "notebooks/slideseq_mouse_olfactory_bulb.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    threads:
+        1024 # unrealistically large core count to ensure that no other job of the workflow interferes with TACCO
+    log:
+        "logs/slideseq_mouse_olfactory_bulb/run_notebook.log"
+    benchmark:
+        "benchmarks/slideseq_mouse_olfactory_bulb/run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/slideseq_mouse_olfactory_bulb/notebook.ipynb --output ../../{output}"
+
+rule smob_run_notebook_single:
+    input:
+        *slideseq_mouse_olfactory_bulb_targets(replicates=[1],slides=[5])
+    output:
+        "notebooks/slideseq_mouse_olfactory_bulb_single.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    threads:
+        1024 # unrealistically large core count to ensure that no other job of the workflow interferes with TACCO
+    log:
+        "logs/slideseq_mouse_olfactory_bulb/run_notebook_single.log"
+    benchmark:
+        "benchmarks/slideseq_mouse_olfactory_bulb/run_notebook_single.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/slideseq_mouse_olfactory_bulb/notebook_single.ipynb --output ../../{output}"
+
+rule smob_make_reference:
+    output:
+        *slideseq_mouse_olfactory_bulb_make_reference_targets()
+    conda:
+        "../envs/TACCO_env.yml"
+    log:
+        "logs/slideseq_mouse_olfactory_bulb/make_reference.log"
+    benchmark:
+        "benchmarks/slideseq_mouse_olfactory_bulb/make_reference.tsv"
+    script:
+        "make_reference.py"
+
+rule smob_make_puck:
+    input:
+        gene_names="results/slideseq_mouse_olfactory_bulb/puck_gene_names/{replicate}_{slide}_gene_names.csv",
+        expression="results/slideseq_mouse_olfactory_bulb/{replicate}_{slide}.mtx",
+        location="results/slideseq_mouse_olfactory_bulb/{replicate}_{slide}.csv"
+    output:
+        "results/slideseq_mouse_olfactory_bulb/puck_{replicate}_{slide}.h5ad"
+    conda:
+        "../envs/TACCO_env.yml"
+    log:
+        "logs/slideseq_mouse_olfactory_bulb/make_puck_{replicate}_{slide}.log"
+    benchmark:
+        "benchmarks/slideseq_mouse_olfactory_bulb/make_puck_{replicate}_{slide}.tsv"
+    script:
+        "make_puck.py"
+
+rule smob_get_puck_genes:
+    input:
+        "resources/slideseq_mouse_olfactory_bulb/{replicate}_{slide}.rds"
+    output:
+        gene_names=temp("results/slideseq_mouse_olfactory_bulb/puck_gene_names/{replicate}_{slide}_gene_names.csv"),
+        expression=temp("results/slideseq_mouse_olfactory_bulb/{replicate}_{slide}.mtx"),
+        location=temp("results/slideseq_mouse_olfactory_bulb/{replicate}_{slide}.csv")
+    conda:
+        "../envs/Seurat_env.yml"
+    log:
+        "logs/slideseq_mouse_olfactory_bulb/extract_from_rds_{replicate}_{slide}.log"
+    benchmark:
+        "benchmarks/slideseq_mouse_olfactory_bulb/extract_from_rds_{replicate}_{slide}.tsv"
+    script:
+        "extract_from_rds.R"
+
+rule smob_download_puck_files:
+    output:
+        rds=temp("resources/slideseq_mouse_olfactory_bulb/{replicate}_{slide}.rds"),
+    log:
+        "logs/slideseq_mouse_olfactory_bulb/download_puck_files_{replicate}_{slide}.log"
+    benchmark:
+        "benchmarks/slideseq_mouse_olfactory_bulb/download_puck_files_{replicate}_{slide}.tsv"
+    script:
+        "download_puck_files.py"

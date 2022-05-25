@@ -1,0 +1,7 @@
+.snakemake/
+.ipynb_checkpoints/
+/benchmarks/
+/logs/
+/results/
+/notebooks/
+dag.svg

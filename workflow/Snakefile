@@ -1,0 +1,24 @@
+include: "slideseq_mouse_olfactory_bulb/Snakefile"
+
+include: "code.snk"
+
+rule all:
+    input:
+        "notebooks/slideseq_mouse_olfactory_bulb.ipynb",
+        "notebooks/slideseq_mouse_olfactory_bulb_single.ipynb",
+
+rule slideseq_mouse_olfactory_bulb:
+    input:
+        "notebooks/slideseq_mouse_olfactory_bulb.ipynb"
+
+rule slideseq_mouse_olfactory_bulb_single:
+    input:
+        "notebooks/slideseq_mouse_olfactory_bulb_single.ipynb"
+
+rule prepare_slideseq_mouse_olfactory_bulb:
+    input:
+        *slideseq_mouse_olfactory_bulb_targets()
+
+rule prepare_slideseq_mouse_olfactory_bulb_single:
+    input:
+        *slideseq_mouse_olfactory_bulb_targets(replicates=[1],slides=[5])

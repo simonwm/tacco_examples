@@ -1,0 +1,17 @@
+def slideseq_mouse_olfactory_bulb_targets(replicates=[1,2],slides=range(1,21)):
+    return [
+        *slideseq_mouse_olfactory_bulb_make_reference_targets(),
+		*slideseq_mouse_olfactory_bulb_make_puck_targets(replicates=replicates,slides=slides)
+    ]
+
+def slideseq_mouse_olfactory_bulb_make_reference_targets():
+    return [
+        "results/slideseq_mouse_olfactory_bulb/reference.h5ad"
+    ]
+
+def slideseq_mouse_olfactory_bulb_make_puck_targets(replicates=[1,2],slides=range(1,21)):
+    return [
+        f"results/slideseq_mouse_olfactory_bulb/puck_{replicate}_{slide}.h5ad"
+        for replicate in replicates for slide in slides
+    ]
+

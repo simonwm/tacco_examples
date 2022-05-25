@@ -1,0 +1,5 @@
+name: Seurat_env
+channels:
+  - conda-forge
+dependencies:
+  - r-seurat
