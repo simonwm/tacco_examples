@@ -4,9 +4,9 @@ This repository contains example notebooks on the usage of [TACCO](https://githu
 
 # How to use the examples
 
-To view the examples with their results, open the notebooks.
+To view the examples with their results, open the executed notebooks in the `notebooks` directory of the `main` branch or in the examples section of the [TACCO documentation](https://simonwm.github.io/tacco/examples.html).
 
-To execute them locally, clone the repository, and run the workflow with `snakemake`.
+To execute the examples locally, clone the repository, and run the workflow with `snakemake`. The `main` branch contains also the executed notebooks, i.e. it is quite big, while the `devel` branch contains only the code itself to regenerate the notebooks. To clone only the devel branch use `git clone --single-branch --branch devel git@github.com:simonwm/tacco_examples.git`.
 
 ## Setup snakemake
 
