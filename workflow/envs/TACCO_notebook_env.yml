@@ -22,9 +22,13 @@ dependencies:
   - scikit-learn
   - threadpoolctl
   - pyamg
+  - pytables
+  - loompy
   - jupyter
   - jupyterlab_code_formatter
-  - pip # for pip installing tacco
+  - pip # for pip installing tacco, novoSpaRc, and wot
   - git # for pip installing tacco from github
   - pip:
      - git+https://github.com/simonwm/tacco.git
+     - novoSpaRc
+     - wot

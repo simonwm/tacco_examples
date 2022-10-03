@@ -7,8 +7,10 @@ rule smob_run_notebook:
         "notebooks/slideseq_mouse_olfactory_bulb.ipynb"
     conda:
         "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=50000
     threads:
-        1024 # unrealistically large core count to ensure that no other job of the workflow interferes with TACCO
+        8
     log:
         "logs/slideseq_mouse_olfactory_bulb/run_notebook.log"
     benchmark:
@@ -23,8 +25,10 @@ rule smob_run_notebook_single:
         "notebooks/slideseq_mouse_olfactory_bulb_single.ipynb"
     conda:
         "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=20000
     threads:
-        1024 # unrealistically large core count to ensure that no other job of the workflow interferes with TACCO
+        8
     log:
         "logs/slideseq_mouse_olfactory_bulb/run_notebook_single.log"
     benchmark:

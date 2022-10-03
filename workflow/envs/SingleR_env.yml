@@ -1,0 +1,12 @@
+name: SingleR_env
+channels:
+  - conda-forge
+  - bioconda 
+dependencies:
+  - r-base
+  - r-hdf5r
+  - r-matrix
+  - r-sparsem
+  - r-data.table  
+  - bioconductor-singler 
+  - bioconductor-scran

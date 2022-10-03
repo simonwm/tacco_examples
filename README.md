@@ -25,7 +25,7 @@ For some examples (e.g. `slideseq_mouse_olfactory_bulb`) there is also a version
 
 ### Running on the local node
 
-To run the workflow on the machine on which the `snakemake` command is executed, use the `--cores <N>` option. This tells snakemake to use plan with `N` cpu cores for working on all the steps in the workflow. Note that `--cores 1` will not limit TACCO to use all the cores which are available on the machine as this value is not propagated to the notebook. So changing this number will change only the degree of parallelization for the preparation of the datasets, i.e. the number of parallel download and data convertion tasks.
+To run the workflow on the machine on which the `snakemake` command is executed, use the `--cores <N>` option. This tells snakemake to plan with `N` cpu cores for working on all the steps in the workflow. Note that `--cores 1` will not limit TACCO to use all the cores which are available on the machine as this value is not propagated to the notebook. So changing this number will change only the degree of parallelization for the preparation of the datasets, i.e. the number of parallel download and data convertion tasks.
 
 ### Running somewhere else
 

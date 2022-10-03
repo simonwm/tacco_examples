@@ -1,0 +1,55 @@
+localrules: osmFISH_download_data
+
+rule osmFISH_run_notebook:
+    input:
+        counts_h5ad="results/osmFISH/data/reference.h5ad",
+        coords_csv="results/osmFISH/data/rna_coords.csv.gz",
+    output:
+        "notebooks/osmFISH_single_molecule_annotation.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    threads:
+        1024 # unrealistically large core count to ensure that no other job of the workflow interferes with TACCO
+    resources:
+        mem_mb=80000,
+    log:
+        "logs/osmFISH_single_molecule_annotation/osmFISH_run_notebook.log"
+    benchmark:
+        "benchmarks/osmFISH_single_molecule_annotation/osmFISH_run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/osmFISH_single_molecule_annotation/notebook.ipynb --output ../../{output}"
+
+rule osmFISH_prep_data:
+    input:
+        counts_loom="resources/osmFISH/osmFISH_SScortex_mouse_all_cells.loom",
+        coords_hdf5="resources/osmFISH/mRNA_coords_raw_counting.hdf5",
+        seg_pkl="resources/osmFISH/polyT_seg.pkl",
+    output:
+        counts_h5ad="results/osmFISH/data/reference.h5ad",
+        coords_csv="results/osmFISH/data/rna_coords.csv.gz",
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=30000
+    log:
+        "logs/osmFISH_single_molecule_annotation/osmFISH_prep_data.log"
+    benchmark:
+        "benchmarks/osmFISH_single_molecule_annotation/osmFISH_prep_data.tsv"
+    script:
+        "osmFISH_prep_data.py"
+
+rule osmFISH_download_data:
+    output:
+        counts_loom="resources/osmFISH/osmFISH_SScortex_mouse_all_cells.loom",
+        coords_hdf5="resources/osmFISH/mRNA_coords_raw_counting.hdf5",
+        seg_pkl="resources/osmFISH/polyT_seg.pkl",
+    log:
+        "logs/osmFISH_single_molecule_annotation/osmFISH_download_data.log"
+    benchmark:
+        "benchmarks/osmFISH_single_molecule_annotation/osmFISH_download_data.tsv"
+    shell:
+        '(mkdir -p resources/osmFISH/ && '
+        'pushd resources/osmFISH/ && '
+        'wget http://linnarssonlab.org/osmFISH/osmFISH_SScortex_mouse_all_cells.loom && '
+        'wget https://storage.googleapis.com/linnarsson-lab-www-blobs/blobs/osmFISH/data/mRNA_coords_raw_counting.hdf5 && '
+        'wget https://storage.googleapis.com/linnarsson-lab-www-blobs/blobs/osmFISH/data/polyT_seg.pkl) &> {log}'

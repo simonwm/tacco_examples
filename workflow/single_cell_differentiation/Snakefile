@@ -1,0 +1,72 @@
+localrules: differentiation_download_data, link_env
+
+rule differentiation_run_notebook:
+    input:
+        d4d6_h5ad="results/single_cell_differentiation/data/d4_d6_differentiation.h5ad",
+        d2_h5ad="results/single_cell_differentiation/data/d2_differentiation.h5ad",
+        SingleR_env_link="results/env_links/SingleR_env",
+        RCTD_env_link="results/env_links/RCTD_env",
+    output:
+        "notebooks/single_cell_differentiation.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=8000
+    log:
+        "logs/single_cell_differentiation/run_notebook.log"
+    benchmark:
+        "benchmarks/single_cell_differentiation/run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/single_cell_differentiation/notebook.ipynb --output ../../{output}"
+
+rule link_env:
+    input:
+        env_yml="workflow/envs/{target}_env.yml",
+    output:
+        env_link=directory("results/env_links/{target}_env"),
+    conda:
+        "../envs/{target}_env.yml"
+    log:
+        "logs/link_env/{target}_env.log"
+    benchmark:
+        "benchmarks/link_env/{target}_env.tsv"
+    shell:
+        '(mkdir -p results/env_links/ && '
+        'ln -s $CONDA_PREFIX {output}) &> {log}'
+
+rule differentiation_make_adata:
+    input:
+        normed_counts="resources/differentiation/GSM4185642_stateFate_inVitro_normed_counts.mtx.gz",
+        gene_names="resources/differentiation/GSM4185642_stateFate_inVitro_gene_names.txt.gz",
+        clone_matrix="resources/differentiation/GSM4185642_stateFate_inVitro_clone_matrix.mtx.gz",
+        metadata="resources/differentiation/GSM4185642_stateFate_inVitro_metadata.txt.gz",
+    output:
+        d4d6_h5ad="results/single_cell_differentiation/data/d4_d6_differentiation.h5ad",
+        d2_h5ad="results/single_cell_differentiation/data/d2_differentiation.h5ad",
+    conda:
+        "../envs/TACCO_env.yml"
+    log:
+        "logs/single_cell_differentiation/differentiation_make_adata.log"
+    benchmark:
+        "benchmarks/single_cell_differentiation/differentiation_make_adata.tsv"
+    script:
+        "differentiation_make_adata.py"
+
+rule differentiation_download_data:
+    output:
+        normed_counts="resources/differentiation/GSM4185642_stateFate_inVitro_normed_counts.mtx.gz",
+        gene_names="resources/differentiation/GSM4185642_stateFate_inVitro_gene_names.txt.gz",
+        clone_matrix="resources/differentiation/GSM4185642_stateFate_inVitro_clone_matrix.mtx.gz",
+        metadata="resources/differentiation/GSM4185642_stateFate_inVitro_metadata.txt.gz",
+    log:
+        "logs/single_cell_differentiation/differentiation_download_data.log"
+    benchmark:
+        "benchmarks/single_cell_differentiation/differentiation_download_data.tsv"
+    shell:
+        '(mkdir -p resources/differentiation/ && '
+        'pushd resources/differentiation/ && '
+        'wget https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM4185nnn/GSM4185642/suppl/GSM4185642_stateFate_inVitro_normed_counts.mtx.gz && '
+        'wget https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM4185nnn/GSM4185642/suppl/GSM4185642_stateFate_inVitro_gene_names.txt.gz && '
+        'wget https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM4185nnn/GSM4185642/suppl/GSM4185642_stateFate_inVitro_clone_matrix.mtx.gz && '
+        'wget https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM4185nnn/GSM4185642/suppl/GSM4185642_stateFate_inVitro_metadata.txt.gz) &> {log}'
+        
