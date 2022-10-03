@@ -1,4 +1,6 @@
 include: "slideseq_mouse_olfactory_bulb/Snakefile"
+include: "osmFISH_single_molecule_annotation/Snakefile"
+include: "single_cell_differentiation/Snakefile"
 
 include: "code.snk"
 
@@ -6,6 +8,8 @@ rule all:
     input:
         "notebooks/slideseq_mouse_olfactory_bulb.ipynb",
         "notebooks/slideseq_mouse_olfactory_bulb_single.ipynb",
+        "notebooks/osmFISH_single_molecule_annotation.ipynb",
+        "notebooks/single_cell_differentiation.ipynb",
 
 rule slideseq_mouse_olfactory_bulb:
     input:
@@ -22,3 +26,23 @@ rule prepare_slideseq_mouse_olfactory_bulb:
 rule prepare_slideseq_mouse_olfactory_bulb_single:
     input:
         *slideseq_mouse_olfactory_bulb_targets(replicates=[1],slides=[5])
+
+rule osmFISH_single_molecule_annotation:
+    input:
+        "notebooks/osmFISH_single_molecule_annotation.ipynb"
+
+rule prepare_osmFISH_single_molecule_annotation:
+    input:
+        "results/osmFISH/data/reference.h5ad",
+        "results/osmFISH/data/rna_coords.csv.gz",
+
+rule single_cell_differentiation:
+    input:
+        "notebooks/single_cell_differentiation.ipynb"
+
+rule prepare_single_cell_differentiation:
+    input:
+        "results/single_cell_differentiation/data/d4_d6_differentiation.h5ad",
+        "results/single_cell_differentiation/data/d2_differentiation.h5ad",
+        "results/env_links/SingleR_env",
+        "results/env_links/RCTD_env",
