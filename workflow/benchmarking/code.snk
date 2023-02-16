@@ -1,0 +1,27 @@
+def benchmarking_collect_results_input(wildcards):
+    purpose = wildcards['purpose']
+    
+    Ncores = [8]
+    MBs = [80000]
+    Nrefs = [2**14]
+    Ndats = [2**10,2**12,2**14,2**16,2**18,2**20]
+    datasets = ['Mixture','Dropout','Differentiation']
+    
+    if purpose == 'cross_methods':
+        methods = ['TACCO', 'NMFreg', 'RCTD', 'WOT', 'Tangram_ast', 'NovoSpaRc_ast', 'TACCO_cat', 'SingleR', 'SVM', ]
+    elif purpose == 'cross_params':
+        methods = ['TACCO', 'TACCO_without_platform_normalization', 'TACCO_without_multicenter', 'TACCO_without_bisection', 'TACCO_with_multicenter_5', 'TACCO_with_multicenter_20',  'TACCO_with_bisection_2_2', 'TACCO_with_bisection_2_4', 'TACCO_with_bisection_8_2', 'TACCO_with_bisection_8_4', 'TACCO_with_epsilon_0.05', 'TACCO_with_epsilon_0.5', 'TACCO_with_lambda_1.0', 'TACCO_with_lambda_0.01']
+    else:
+        raise ValueError(f'The purpose {purpose!r} is unknown!')
+    
+    inputs = []
+    for Ncore in Ncores:
+        for MB in MBs:
+            for Nref in Nrefs:
+                for Ndat in Ndats:
+                    for dataset in datasets:
+                        for method in methods:
+                            inputs.append(f'results/benchmarking/evaluation_{method}_{dataset}_{Ndat}_{Nref}_{Ncore}_{MB}.json')
+                            inputs.append(f'results/benchmarking/resources_{method}_{dataset}_{Ndat}_{Nref}_{Ncore}_{MB}.json')
+    
+    return inputs

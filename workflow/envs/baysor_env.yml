@@ -1,0 +1,6 @@
+name: baysor_env
+channels:
+  - conda-forge
+dependencies:
+  - julia=1.8.0
+  - R

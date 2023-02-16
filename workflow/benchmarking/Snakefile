@@ -1,0 +1,96 @@
+include: "code.snk"
+
+rule benchmarking_run_notebook:
+    input:
+        "results/benchmarking/cross_methods.csv",
+        "results/benchmarking/cross_params.csv",
+    output:
+        "notebooks/benchmarking.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    log:
+        "logs/benchmarking/run_notebook.log"
+    benchmark:
+        "benchmarks/benchmarking/run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/benchmarking/notebook.ipynb --output ../../{output}"
+
+rule benchmarking_collect_results:
+    input:
+        benchmarking_collect_results_input,
+    output:
+        collection_csv="results/benchmarking/{purpose}.csv",
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    log:
+        "logs/benchmarking/benchmarking_collect_results/{purpose}.log"
+    benchmark:
+        "benchmarks/benchmarking/benchmarking_collect_results/{purpose}.tsv"
+    script:
+        "benchmarking_collect_results.py"
+
+rule benchmarking_run_evaluation:
+    input:
+        annotation_in="results/benchmarking/annotation_{method}_{dataset}_{Ndat}_{Nref}_{Ncore}_{MB}.pkl.gz",
+        data_in="results/benchmarking/data/{dataset}_data.h5ad",
+        keys_in="results/benchmarking/data/{dataset}_keys.json",
+    output:
+        evaluation_out="results/benchmarking/evaluation_{method}_{dataset}_{Ndat}_{Nref}_{Ncore}_{MB}.json",
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=lambda wildcards: int(wildcards['MB']),
+    log:
+        "logs/benchmarking/benchmarking_run_evaluation/{method}_{dataset}_{Ndat}_{Nref}_{Ncore}_{MB}.log"
+    benchmark:
+        "benchmarks/benchmarking/benchmarking_run_evaluation/{method}_{dataset}_{Ndat}_{Nref}_{Ncore}_{MB}.tsv"
+    script:
+        "benchmarking_run_evaluation.py"
+
+rule benchmarking_run_annotation:
+    input:
+        tangram_env_link="results/env_links/tangram_env",
+        SingleR_env_link="results/env_links/SingleR_env",
+        RCTD_env_link="results/env_links/RCTD_env",
+        reference_in="results/benchmarking/data/{dataset}_reference.h5ad",
+        data_in="results/benchmarking/data/{dataset}_data.h5ad",
+        keys_in="results/benchmarking/data/{dataset}_keys.json",
+    output:
+        annotation_out="results/benchmarking/annotation_{method}_{dataset}_{Ndat}_{Nref}_{Ncore}_{MB}.pkl.gz",
+        resources_out="results/benchmarking/resources_{method}_{dataset}_{Ndat}_{Nref}_{Ncore}_{MB}.json",
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    retries:
+        2
+    threads:
+        lambda wildcards: int(wildcards['Ncore'])
+    resources:
+        mem_mb=lambda wildcards: int(wildcards['MB']),
+        runtime="8:00:00",
+        attempt=lambda wildcards, input, threads, attempt: attempt, # use resources to pass information about a first failed attempt to the script
+    log:
+        "logs/benchmarking/benchmarking_run_annotation/{method}_{dataset}_{Ndat}_{Nref}_{Ncore}_{MB}.log"
+    benchmark:
+        "benchmarks/benchmarking/benchmarking_run_annotation/{method}_{dataset}_{Ndat}_{Nref}_{Ncore}_{MB}.tsv"
+    script:
+        "benchmarking_run_annotation.py"
+
+rule benchmarking_create_dataset:
+    input:
+        d4d6_h5ad="results/single_cell_differentiation/data/d4_d6_differentiation.h5ad",
+        d2_h5ad="results/single_cell_differentiation/data/d2_differentiation.h5ad",
+        mouse_colon_scrnaseq="results/slideseq_mouse_colon/data/scrnaseq.h5ad",
+    output:
+        reference_out="results/benchmarking/data/{dataset}_reference.h5ad",
+        data_out="results/benchmarking/data/{dataset}_data.h5ad",
+        keys_out="results/benchmarking/data/{dataset}_keys.json",
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=20000,
+    log:
+        "logs/benchmarking/benchmarking_create_dataset/{dataset}.log"
+    benchmark:
+        "benchmarks/benchmarking/benchmarking_create_dataset/{dataset}.tsv"
+    script:
+        "benchmarking_create_dataset.py"

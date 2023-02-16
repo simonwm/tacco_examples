@@ -3,21 +3,119 @@ localrules: osmFISH_download_data
 rule osmFISH_run_notebook:
     input:
         counts_h5ad="results/osmFISH/data/reference.h5ad",
-        coords_csv="results/osmFISH/data/rna_coords.csv.gz",
+        anno_csv="results/osmFISH/full_anno.csv.gz",
     output:
         "notebooks/osmFISH_single_molecule_annotation.ipynb"
     conda:
         "../envs/TACCO_notebook_env.yml"
     threads:
-        1024 # unrealistically large core count to ensure that no other job of the workflow interferes with TACCO
+        8
     resources:
-        mem_mb=80000,
+        mem_mb=30000
     log:
         "logs/osmFISH_single_molecule_annotation/osmFISH_run_notebook.log"
     benchmark:
         "benchmarks/osmFISH_single_molecule_annotation/osmFISH_run_notebook.tsv"
     shell:
         "jupyter nbconvert --to notebook --execute workflow/osmFISH_single_molecule_annotation/notebook.ipynb --output ../../{output}"
+
+rule osmFISH_run_TACCO_segmentation:
+    input:
+        anno_csv="results/osmFISH/anno_collected.csv.gz",
+    output:
+        seg_csv="results/osmFISH/full_anno.csv.gz",
+        time_json="results/osmFISH/segmentation_timing.json",
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    threads:
+        8
+    resources:
+        mem_mb=80000,
+    log:
+        "logs/osmFISH_single_molecule_annotation/osmFISH_run_TACCO_segmentation.log"
+    benchmark:
+        "benchmarks/osmFISH_single_molecule_annotation/osmFISH_run_TACCO_segmentation.tsv"
+    script:
+        "osmFISH_run_TACCO_segmentation.py"
+        
+rule osmFISH_collect_annotations:
+    input:
+        tacco_csv="results/osmFISH/TACCO/anno.csv.gz",
+        baysor_csv="results/osmFISH/Baysor/anno.csv.gz",
+        ssam_csv="results/osmFISH/SSAM/anno.csv.gz",
+    output:
+        anno_csv="results/osmFISH/anno_collected.csv.gz",
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=20000,
+    log:
+        "logs/osmFISH_single_molecule_annotation/osmFISH_run_TACCO.log"
+    benchmark:
+        "benchmarks/osmFISH_single_molecule_annotation/osmFISH_run_TACCO.tsv"
+    script:
+        "osmFISH_collect_annotations.py"
+
+rule osmFISH_run_TACCO:
+    input:
+        counts_h5ad="results/osmFISH/data/reference.h5ad",
+        coords_csv="results/osmFISH/data/rna_coords.csv.gz",
+    output:
+        anno_csv="results/osmFISH/TACCO/anno.csv.gz",
+        time_json="results/osmFISH/TACCO/timing.json",
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    threads:
+        8
+    resources:
+        mem_mb=25000,
+    log:
+        "logs/osmFISH_single_molecule_annotation/osmFISH_run_TACCO.log"
+    benchmark:
+        "benchmarks/osmFISH_single_molecule_annotation/osmFISH_run_TACCO.tsv"
+    script:
+        "osmFISH_run_TACCO.py"
+
+rule osmFISH_run_SSAM:
+    input:
+        counts_h5ad="results/osmFISH/data/reference.h5ad",
+        coords_csv="results/osmFISH/data/rna_coords.csv.gz",
+    output:
+        anno_csv="results/osmFISH/SSAM/anno.csv.gz",
+        time_json="results/osmFISH/SSAM/timing.json",
+    conda:
+        "../envs/ssam_env.yml"
+    threads:
+        8
+    resources:
+        mem_mb=80000,
+        runtime="24:00:00",
+    log:
+        "logs/osmFISH_single_molecule_annotation/osmFISH_run_SSAM.log"
+    benchmark:
+        "benchmarks/osmFISH_single_molecule_annotation/osmFISH_run_SSAM.tsv"
+    script:
+        "osmFISH_run_SSAM.py"
+
+rule osmFISH_run_Baysor:
+    input:
+        coords_pxl_csv="results/osmFISH/data/rna_coords_pxl.csv.gz",
+        centroid_profiles_csv="results/osmFISH/data/centroid_profiles.csv.gz",
+    output:
+        anno_csv="results/osmFISH/Baysor/anno.csv.gz",
+        time_json="results/osmFISH/Baysor/timing.json",
+    conda:
+        "../envs/baysor_env.yml"
+    threads:
+        8
+    resources:
+        mem_mb=30000
+    log:
+        "logs/osmFISH_single_molecule_annotation/osmFISH_run_Baysor.log"
+    benchmark:
+        "benchmarks/osmFISH_single_molecule_annotation/osmFISH_run_Baysor.tsv"
+    script:
+        "osmFISH_run_Baysor.jl"
 
 rule osmFISH_prep_data:
     input:
@@ -27,6 +125,8 @@ rule osmFISH_prep_data:
     output:
         counts_h5ad="results/osmFISH/data/reference.h5ad",
         coords_csv="results/osmFISH/data/rna_coords.csv.gz",
+        coords_pxl_csv="results/osmFISH/data/rna_coords_pxl.csv.gz",
+        centroid_profiles_csv="results/osmFISH/data/centroid_profiles.csv.gz",
     conda:
         "../envs/TACCO_notebook_env.yml"
     resources:

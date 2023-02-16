@@ -1,0 +1,23 @@
+include: "code.snk"
+
+rule imc_run_notebook:
+    input:
+        *insilico_mouse_colon_targets(),
+        SingleR_env_link="results/env_links/SingleR_env",
+        RCTD_env_link="results/env_links/RCTD_env",
+    output:
+        "notebooks/insilico_mouse_colon.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=50000,
+        runtime="12:00:00"
+    threads:
+        8
+    log:
+        "logs/insilico_mouse_colon/run_notebook.log"
+    benchmark:
+        "benchmarks/insilico_mouse_colon/run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/insilico_mouse_colon/notebook.ipynb --output ../../{output}"
+

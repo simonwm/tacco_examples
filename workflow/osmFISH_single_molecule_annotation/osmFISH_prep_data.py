@@ -11,6 +11,8 @@ coords_hdf5 = snakemake.input['coords_hdf5']
 seg_pkl = snakemake.input['seg_pkl']
 output_counts_h5ad = snakemake.output['counts_h5ad']
 output_coords_csv = snakemake.output['coords_csv']
+output_coords_pxl_csv = snakemake.output['coords_pxl_csv']
+output_centroid_profiles_csv = snakemake.output['centroid_profiles_csv']
 
 
 # helper functions
@@ -76,10 +78,15 @@ rna_coords.loc[rna_coords['ClusterName']=="Excluded",'ClusterName'] = ''
 reference = reference[reference.obs['ClusterName'] != 'Excluded'].copy()
 
 # optimize the output
+rna_coords.loc[rna_coords['ClusterName']=='','ClusterName'] = np.nan
 rna_coords['ClusterName'] = rna_coords['ClusterName'].astype('category')
 rna_coords['cell'] = rna_coords['cell'].astype('category')
 rna_coords['gene'] = rna_coords['gene'].astype(pd.CategoricalDtype(categories=reference.var.index, ordered=True))
 reference.obs['ClusterName'] = reference.obs['ClusterName'].astype('category')
+
+# export result in pixel coordinates and as csv for Baysor...
+os.makedirs(os.path.dirname(output_coords_pxl_csv), exist_ok=True)
+rna_coords.to_csv(output_coords_pxl_csv,index=False)
 
 # transform to um
 rna_coords[['x','y']] *= um_per_pixel
@@ -90,3 +97,11 @@ os.makedirs(os.path.dirname(output_counts_h5ad), exist_ok=True)
 reference.write(output_counts_h5ad, compression='gzip')
 os.makedirs(os.path.dirname(output_coords_csv), exist_ok=True)
 rna_coords.to_csv(output_coords_csv,index=False)
+
+# export cell type centroids as csv for Baysor...
+one_hot = pd.get_dummies(reference.obs['ClusterName'])
+one_hot.columns.name = 'ClusterName'
+centroid_per_type = pd.DataFrame([np.mean(reference.X[which.to_numpy().astype(bool)], axis=0) for cname, which in one_hot.items()],index=one_hot.columns,columns=reference.var.index)
+centroid_per_type.to_csv('temp.csv')
+os.makedirs(os.path.dirname(output_centroid_profiles_csv), exist_ok=True)
+centroid_per_type.to_csv(output_centroid_profiles_csv)

@@ -1,0 +1,11 @@
+rule ov_run_notebook:
+    output:
+        "notebooks/overview.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    log:
+        "logs/overview/run_notebook.log"
+    benchmark:
+        "benchmarks/overview/run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/overview/notebook.ipynb --output ../../{output}"

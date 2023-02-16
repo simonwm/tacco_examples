@@ -1,0 +1,19 @@
+include: "code.snk"
+
+rule os_run_notebook:
+    input:
+        *object_splitting_targets(),
+    output:
+        "notebooks/object_splitting.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=50000
+    threads:
+        8
+    log:
+        "logs/object_splitting/run_notebook.log"
+    benchmark:
+        "benchmarks/object_splitting/run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/object_splitting/notebook.ipynb --output ../../{output}"

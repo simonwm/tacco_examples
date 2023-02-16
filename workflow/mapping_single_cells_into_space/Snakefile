@@ -1,0 +1,19 @@
+
+rule mscis_run_notebook:
+    input:
+        *slideseq_mouse_olfactory_bulb_targets()
+    output:
+        "notebooks/mapping_single_cells_into_space.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    threads:
+        8
+    resources:
+        mem_mb=200000,
+        runtime="16:00:00",
+    log:
+        "logs/mapping_single_cells_into_space/run_notebook.log"
+    benchmark:
+        "benchmarks/mapping_single_cells_into_space/run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/mapping_single_cells_into_space/notebook.ipynb --output ../../{output}"

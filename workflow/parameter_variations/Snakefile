@@ -1,0 +1,17 @@
+rule parameter_variations_run_notebook:
+    input:
+        d4d6_h5ad="results/single_cell_differentiation/data/d4_d6_differentiation.h5ad",
+        d2_h5ad="results/single_cell_differentiation/data/d2_differentiation.h5ad",
+        *insilico_mouse_colon_targets(),
+    output:
+        "notebooks/parameter_variations.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=8000
+    log:
+        "logs/parameter_variations/run_notebook.log"
+    benchmark:
+        "benchmarks/parameter_variations/run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/parameter_variations/notebook.ipynb --output ../../{output}"        
