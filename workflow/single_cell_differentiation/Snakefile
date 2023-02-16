@@ -1,4 +1,4 @@
-localrules: differentiation_download_data, link_env
+localrules: differentiation_download_data
 
 rule differentiation_run_notebook:
     input:
@@ -19,21 +19,6 @@ rule differentiation_run_notebook:
     shell:
         "jupyter nbconvert --to notebook --execute workflow/single_cell_differentiation/notebook.ipynb --output ../../{output}"
 
-rule link_env:
-    input:
-        env_yml="workflow/envs/{target}_env.yml",
-    output:
-        env_link=directory("results/env_links/{target}_env"),
-    conda:
-        "../envs/{target}_env.yml"
-    log:
-        "logs/link_env/{target}_env.log"
-    benchmark:
-        "benchmarks/link_env/{target}_env.tsv"
-    shell:
-        '(mkdir -p results/env_links/ && '
-        'ln -s $CONDA_PREFIX {output}) &> {log}'
-
 rule differentiation_make_adata:
     input:
         normed_counts="resources/differentiation/GSM4185642_stateFate_inVitro_normed_counts.mtx.gz",
@@ -45,6 +30,8 @@ rule differentiation_make_adata:
         d2_h5ad="results/single_cell_differentiation/data/d2_differentiation.h5ad",
     conda:
         "../envs/TACCO_env.yml"
+    resources:
+        mem_mb=8000
     log:
         "logs/single_cell_differentiation/differentiation_make_adata.log"
     benchmark:

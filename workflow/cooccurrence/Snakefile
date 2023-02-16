@@ -1,0 +1,17 @@
+rule cooc_run_notebook:
+    input:
+        *slideseq_mouse_olfactory_bulb_targets(replicates=[1],slides=[4,5,6,7])
+    output:
+        "notebooks/cooccurrence.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=50000
+    threads:
+        8
+    log:
+        "logs/cooccurrence/run_notebook.log"
+    benchmark:
+        "benchmarks/cooccurrence/run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/cooccurrence/notebook.ipynb --output ../../{output}"

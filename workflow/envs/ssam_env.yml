@@ -1,0 +1,16 @@
+name: ssam_env
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python
+  - numpy
+  - anndata
+  - pip
+  - pyarrow=0.15.1
+  - pandas=1.2
+  - R=3.6
+  - r-sctransform
+  - r-feather
+  - pip:
+    - ssam

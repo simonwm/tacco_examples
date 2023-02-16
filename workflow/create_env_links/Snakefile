@@ -1,0 +1,17 @@
+localrules: link_env
+
+rule link_env:
+    input:
+        env_yml="workflow/envs/{target}_env.yml",
+    output:
+        env_link=directory("results/env_links/{target}_env"),
+    conda:
+        "../envs/{target}_env.yml"
+    log:
+        "logs/link_env/{target}_env.log"
+    benchmark:
+        "benchmarks/link_env/{target}_env.tsv"
+    shell:
+        '(mkdir -p results/env_links/ && '
+        'ln -s $CONDA_PREFIX {output}) &> {log}'
+

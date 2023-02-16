@@ -1,0 +1,54 @@
+include: "code.snk"
+
+rule smc_run_notebook:
+    input:
+        *slideseq_mouse_colon_targets()
+    output:
+        "notebooks/slideseq_mouse_colon.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=50000
+    threads:
+        8
+    log:
+        "logs/slideseq_mouse_colon/run_notebook.log"
+    benchmark:
+        "benchmarks/slideseq_mouse_colon/run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/slideseq_mouse_colon/notebook.ipynb --output ../../{output}"
+
+rule smc_make_adata:
+    input:
+        Slideseq_raw_mtx="resources/slideseq_mouse_colon/Slideseq_raw.mtx.gz",
+        Slideseq_raw_cells="resources/slideseq_mouse_colon/Slideseq_raw_cells.tsv.gz",
+        Slideseq_raw_genes="resources/slideseq_mouse_colon/Slideseq_raw_genes.tsv.gz",
+        scRNAseq_h5ad="resources/slideseq_mouse_colon/scRNAseq.h5ad",
+        singlecellportal_metadata="resources/slideseq_mouse_colon/singlecellportal_metadata.tsv.gz",
+    output:
+        scrnaseq_h5ad="results/slideseq_mouse_colon/data/scrnaseq.h5ad",
+        slideseq_h5ad="results/slideseq_mouse_colon/data/slideseq.h5ad",
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=8000
+    log:
+        "logs/slideseq_mouse_colon/make_adata.log"
+    benchmark:
+        "benchmarks/slideseq_mouse_colon/make_adata.tsv"
+    script:
+        "make_adata.py"
+
+rule smc_download_data:
+    output:
+        Slideseq_raw_mtx="resources/slideseq_mouse_colon/Slideseq_raw.mtx.gz",
+        Slideseq_raw_cells="resources/slideseq_mouse_colon/Slideseq_raw_cells.tsv.gz",
+        Slideseq_raw_genes="resources/slideseq_mouse_colon/Slideseq_raw_genes.tsv.gz",
+        scRNAseq_h5ad="resources/slideseq_mouse_colon/scRNAseq.h5ad",
+        singlecellportal_metadata="resources/slideseq_mouse_colon/singlecellportal_metadata.tsv.gz",
+    log:
+        "logs/slideseq_mouse_colon/download_puck_data.log"
+    benchmark:
+        "benchmarks/slideseq_mouse_colon/download_puck_files_data.tsv"
+    script:
+        "download_data.py"

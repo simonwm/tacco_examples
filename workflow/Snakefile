@@ -1,15 +1,40 @@
+include: "create_env_links/Snakefile"
+include: "overview/Snakefile"
 include: "slideseq_mouse_olfactory_bulb/Snakefile"
-include: "osmFISH_single_molecule_annotation/Snakefile"
+include: "mapping_single_cells_into_space/Snakefile"
 include: "single_cell_differentiation/Snakefile"
+include: "slideseq_mouse_colon/Snakefile"
+include: "insilico_mouse_colon/Snakefile"
+include: "object_splitting/Snakefile"
+include: "cooccurrence/Snakefile"
+include: "osmFISH_single_molecule_annotation/Snakefile"
+include: "simulated_dropout/Snakefile"
+include: "simulated_ambient/Snakefile"
+include: "parameter_variations/Snakefile"
+include: "benchmarking/Snakefile"
 
 include: "code.snk"
 
 rule all:
     input:
+        "notebooks/overview.ipynb",
         "notebooks/slideseq_mouse_olfactory_bulb.ipynb",
         "notebooks/slideseq_mouse_olfactory_bulb_single.ipynb",
-        "notebooks/osmFISH_single_molecule_annotation.ipynb",
+        "notebooks/mapping_single_cells_into_space.ipynb",
         "notebooks/single_cell_differentiation.ipynb",
+        "notebooks/slideseq_mouse_colon.ipynb",
+        "notebooks/insilico_mouse_colon.ipynb",
+        "notebooks/object_splitting.ipynb",
+        "notebooks/cooccurrence.ipynb",
+        "notebooks/osmFISH_single_molecule_annotation.ipynb",
+        "notebooks/simulated_dropout.ipynb",
+        "notebooks/simulated_ambient.ipynb",
+        "notebooks/parameter_variations.ipynb",
+        "notebooks/benchmarking.ipynb",
+
+rule overview:
+    input:
+        "notebooks/overview.ipynb"
 
 rule slideseq_mouse_olfactory_bulb:
     input:
@@ -27,22 +52,46 @@ rule prepare_slideseq_mouse_olfactory_bulb_single:
     input:
         *slideseq_mouse_olfactory_bulb_targets(replicates=[1],slides=[5])
 
-rule osmFISH_single_molecule_annotation:
+rule mapping_single_cells_into_space:
     input:
-        "notebooks/osmFISH_single_molecule_annotation.ipynb"
-
-rule prepare_osmFISH_single_molecule_annotation:
-    input:
-        "results/osmFISH/data/reference.h5ad",
-        "results/osmFISH/data/rna_coords.csv.gz",
+        "notebooks/mapping_single_cells_into_space.ipynb"
 
 rule single_cell_differentiation:
     input:
         "notebooks/single_cell_differentiation.ipynb"
 
-rule prepare_single_cell_differentiation:
+rule slideseq_mouse_colon:
     input:
-        "results/single_cell_differentiation/data/d4_d6_differentiation.h5ad",
-        "results/single_cell_differentiation/data/d2_differentiation.h5ad",
-        "results/env_links/SingleR_env",
-        "results/env_links/RCTD_env",
+        "notebooks/slideseq_mouse_colon.ipynb"
+
+rule insilico_mouse_colon:
+    input:
+        "notebooks/insilico_mouse_colon.ipynb"
+
+rule object_splitting:
+    input:
+        "notebooks/object_splitting.ipynb"
+
+rule cooccurrence:
+    input:
+        "notebooks/cooccurrence.ipynb"
+
+rule osmFISH_single_molecule_annotation:
+    input:
+        "notebooks/osmFISH_single_molecule_annotation.ipynb"
+
+rule simulated_dropout:
+    input:
+        "notebooks/simulated_dropout.ipynb"
+
+rule simulated_ambient:
+    input:
+        "notebooks/simulated_ambient.ipynb"
+
+rule parameter_variations:
+    input:
+        "notebooks/parameter_variations.ipynb"
+
+rule benchmarking:
+    input:
+        "notebooks/benchmarking.ipynb"

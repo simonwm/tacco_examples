@@ -1,0 +1,5 @@
+def slideseq_mouse_colon_targets():
+    return [
+        "results/slideseq_mouse_colon/data/scrnaseq.h5ad",
+        "results/slideseq_mouse_colon/data/slideseq.h5ad",
+    ]

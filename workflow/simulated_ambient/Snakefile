@@ -1,0 +1,18 @@
+rule sa_run_notebook:
+    input:
+        SingleR_env_link="results/env_links/SingleR_env",
+        RCTD_env_link="results/env_links/RCTD_env",
+    output:
+        "notebooks/simulated_ambient.ipynb"
+    conda:
+        "../envs/TACCO_notebook_env.yml"
+    resources:
+        mem_mb=50000
+    threads:
+        8
+    log:
+        "logs/simulated_ambient/run_notebook.log"
+    benchmark:
+        "benchmarks/simulated_ambient/run_notebook.tsv"
+    shell:
+        "jupyter nbconvert --to notebook --execute workflow/simulated_ambient/notebook.ipynb --output ../../{output}"

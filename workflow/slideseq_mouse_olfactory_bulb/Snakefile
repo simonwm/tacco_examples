@@ -41,6 +41,8 @@ rule smob_make_reference:
         *slideseq_mouse_olfactory_bulb_make_reference_targets()
     conda:
         "../envs/TACCO_env.yml"
+    resources:
+        mem_mb=40000
     log:
         "logs/slideseq_mouse_olfactory_bulb/make_reference.log"
     benchmark:
@@ -73,6 +75,8 @@ rule smob_get_puck_genes:
         location=temp("results/slideseq_mouse_olfactory_bulb/{replicate}_{slide}.csv")
     conda:
         "../envs/Seurat_env.yml"
+    resources:
+        mem_mb=10000
     log:
         "logs/slideseq_mouse_olfactory_bulb/extract_from_rds_{replicate}_{slide}.log"
     benchmark:

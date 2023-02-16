@@ -13,7 +13,7 @@ def get_slideseq_urls(replicate,slide):
         with tarfile.open(fileobj=f, mode="r:gz") as tar:
             with tar.extractfile(tar.getnames()[0]) as xmlfile:
                 content = xmlfile.read().decode('utf-8')
-    available_files = [c for c in content.split('\n') if c.startswith('ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5173nnn/')]
+    available_files = [c.replace('ftp://','https://') for c in content.split('\n') if c.startswith('ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM5173nnn/')]
     
     slide = int(slide)
     replicate = int(replicate)
