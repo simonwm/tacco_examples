@@ -20,7 +20,7 @@ dependencies:
   - umap-learn=0.5.1
   - pynndescent=0.5.2
   - statsmodels
-  - anndata
+  - anndata<0.10.0
   - pandas>=1.1.0
   - scipy=1.7.0
   - mkl
@@ -34,10 +34,10 @@ dependencies:
   - squidpy
   - jupyter
   - jupyterlab_code_formatter
-  - pip # for pip installing tacco, novoSpaRc, wot, and scsim-ext
-  - git # for pip installing tacco and scsim-ext from github
+  - tacco
+  - pip # for pip installing novoSpaRc, wot, and scsim-ext
+  - git # for pip installing scsim-ext from github
   - pip:
-     - git+https://github.com/simonwm/tacco.git
      - novoSpaRc
      - wot
      - git+https://github.com/nitzanlab/scsim-ext.git
