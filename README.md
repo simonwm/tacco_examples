@@ -11,7 +11,7 @@ To execute the examples locally, clone the repository, and run the workflow with
 ## Setup snakemake
 
 In case you do not have `snakemake` set up already, you can follow the [snakemake instructions](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) or just install a new environment in your existing `conda` setup using `conda env create -f workflow/envs/snakemake_env.yml`
-NB: While `snakemake` recommends to install `mamba` as drop in replacement for `conda` in the conda base environment, it does also work with regular `conda` by specifying the additional command line arguments `--use-conda --conda-frontend conda` to `snakemake`. It just takes a while longer to get the individual environments set up, so we also recommend to use `mamba`.
+NB: While `snakemake` recommends to install `mamba` as drop in replacement for `conda` in the conda base environment, it does also work with regular `conda` by specifying the additional command line arguments `--use-conda --conda-frontend conda` to `snakemake`. It just used to take a while longer to get the individual environments set up with older conda versions, so we also recommend to use `mamba` or a [recent version of conda](https://conda.org/blog/2023-11-06-conda-23-10-0-release).
 
 ## Run examples
 
@@ -25,7 +25,7 @@ For some examples (e.g. `slideseq_mouse_olfactory_bulb`) there is also a version
 
 ### Running on the local node
 
-To run the workflow on the machine on which the `snakemake` command is executed, use the `--cores <N>` option. This tells snakemake to use plan with `N` cpu cores for working on all the steps in the workflow. Note that `--cores 1` will not limit TACCO to use all the cores which are available on the machine as this value is not propagated to the notebook. So changing this number will change only the degree of parallelization for the preparation of the datasets, i.e. the number of parallel download and data convertion tasks.
+To run the workflow on the machine on which the `snakemake` command is executed, use the `--cores <N>` option. This tells snakemake to plan with `N` cpu cores for working on all the steps in the workflow. Note that `--cores 1` will not limit TACCO to use all the cores which are available on the machine as this value is not propagated to the notebook. So changing this number will change only the degree of parallelization for the preparation of the datasets, i.e. the number of parallel download and data conversion tasks.
 
 ### Running somewhere else
 

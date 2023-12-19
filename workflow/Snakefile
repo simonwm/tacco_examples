@@ -1,5 +1,6 @@
 include: "create_env_links/Snakefile"
 include: "overview/Snakefile"
+include: "visium_mouse_kidney/Snakefile"
 include: "slideseq_mouse_olfactory_bulb/Snakefile"
 include: "mapping_single_cells_into_space/Snakefile"
 include: "single_cell_differentiation/Snakefile"
@@ -18,6 +19,7 @@ include: "code.snk"
 rule all:
     input:
         "notebooks/overview.ipynb",
+        "notebooks/visium_mouse_kidney.ipynb",
         "notebooks/slideseq_mouse_olfactory_bulb.ipynb",
         "notebooks/slideseq_mouse_olfactory_bulb_single.ipynb",
         "notebooks/mapping_single_cells_into_space.ipynb",
@@ -35,6 +37,10 @@ rule all:
 rule overview:
     input:
         "notebooks/overview.ipynb"
+
+rule visium_mouse_kidney:
+    input:
+        "notebooks/visium_mouse_kidney.ipynb"
 
 rule slideseq_mouse_olfactory_bulb:
     input:
